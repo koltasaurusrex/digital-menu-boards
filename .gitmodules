@@ -1,6 +1,0 @@
-[submodule "dmb-go-backend"]
-	path = dmb-go-backend
-	url = git@github.com:koltasaurusrex/dmb-go-backend.git
-[submodule "dmb-node-frontend"]
-	path = dmb-node-frontend
-	url = git@github.com:koltasaurusrex/dmb-node-frontend.git
