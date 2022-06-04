@@ -20,6 +20,9 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import styles from '../../styles/Home.module.css'
 import GetFlavors from '../../components/GetFlavors';
+import BasicTable from '../../components/BasicTable';
+import { Button } from '@mui/material';
+import CreateFlavor from '../../components/dialogues/CreateFlavor';
 var axios = require('axios');
 
 
@@ -143,7 +146,6 @@ export default function PersistentDrawerLeft() {
             </ListItem>
           ))}
         </List>
-        <Divider />
         <List>
           {['Orders'].map((text, index) => (
             <ListItem key={text} disablePadding>
@@ -159,6 +161,17 @@ export default function PersistentDrawerLeft() {
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
+        <Toolbar
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            // height: '100vh',
+          }}
+          >
+          <h2 className={styles.title}>Flavors</h2>
+          <CreateFlavor />
+        </Toolbar>
         <GetFlavors />
       </Main>
     </Box>

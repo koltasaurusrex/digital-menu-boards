@@ -11,23 +11,17 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// func postFunct() {
-// 	var newAlbum album
-//
-// 	// Call BindJSON to bind the received JSON to
-// 	// newAlbum.
-// 	if err := c.BindJSON(&newAlbum); err != nil {
-// 		return
-// 	}
-//
-// 	// Add the new album to the slice.
-// 	albums = append(albums, newAlbum)
-// 	c.IndentedJSON(http.StatusCreated, newAlbum)
-// }
+var name string
+var id int
+
+type Flavor struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
 
 func main() {
 
-	urlPostgres := "postgres://postgres:kh891@localhost:5432/postgres"
+	urlPostgres := "postgres://postgres:root@postgresql:5432/postgres"
 	conn, err := pgx.Connect(context.Background(), urlPostgres)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
@@ -45,44 +39,38 @@ func main() {
 	// Register the middleware
 	r.Use(cors.New(corsConfig))
 
-	var name string
-	var id int
-
-	type Flavor struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
+	r.GET("/flavors", listAllFlavors)
+	r.POST("/flavors", createFlavor)
+	// r.GET("/flavors/:flavor_id")
+	// r.DELETE("/flavors/:flavor_id")
 
 	r.LoadHTMLGlob("templates/*")
 	//router.LoadHTMLFiles("templates/template1.html", "templates/template2.html")
 	r.GET("/", func(c *gin.Context) {
 		err = conn.QueryRow(context.Background(), "select id, name from flavors where id=$1", 2).Scan(&id, &name)
-		c.HTML(http.StatusOK, "index.html", gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"id":    id,
 			"name":  name,
-			"title": "Dope Town Central",
+			"title": "Dope Town Central Square",
 		})
 	})
 
-	r.GET("/flavors", func(c *gin.Context) {
-		// query db for all flavors
-		data, err := conn.Query(context.Background(), "select * from flavors")
+	r.DELETE("/flavors/:flavor_id", func(c *gin.Context) {
+		id := c.Param("flavor_id")
+		fmt.Fprint(os.Stdout, "ID = ", id, "\n")
+		response, err := conn.Query(context.Background(), "DELETE FROM flavors WHERE id = $1", id)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+			fmt.Fprintf(os.Stderr, "Delete flavor failed: %v\n", err)
 			os.Exit(1)
 		}
-		// structure returned json
-		jsonedData := []Flavor{}
-		for data.Next() {
-			data.Scan(&id, &name)
-			flavor := Flavor{
-				Id:   id,
-				Name: name,
-			}
-			jsonedData = append(jsonedData, flavor)
-		}
+		_ = response
+
 		// return http response
-		c.IndentedJSON(http.StatusOK, jsonedData)
+		c.JSON(http.StatusOK, gin.H{
+			"status":  200,
+			"message": "flavor successfully deleted",
+			"flavor":  id,
+		})
 	})
 
 	r.GET("/flavors/:flavor_id", func(c *gin.Context) {
@@ -102,16 +90,61 @@ func main() {
 		})
 	})
 
-	r.POST("/flavors", func(c *gin.Context) {
-		var flavor Flavor
-		if err := c.BindJSON(&flavor); err != nil {
-			fmt.Fprintf(os.Stderr, "Bind flavor failed: %v\n", err)
-		}
-		err := conn.QueryRow(context.Background(), "INSERT INTO flavors (name) VALUES ($1)", flavor.Name)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Create flavor failed: %v\n", err)
-		}
-	})
+	r.Run(":5555") // listen and serve on 0.0.0.0:5555
+}
 
-	r.Run(":5555") // listen and serve on 0.0.0.0:8080
+func listAllFlavors(c *gin.Context) {
+	// query db for all flavors
+	urlPostgres := "postgres://postgres:root@postgresql:5432/postgres"
+	conn, err := pgx.Connect(context.Background(), urlPostgres)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+	defer conn.Close(context.Background())
+	data, err := conn.Query(context.Background(), "select * from flavors")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+		os.Exit(1)
+	}
+	// structure returned json
+	jsonedData := []Flavor{}
+	for data.Next() {
+		data.Scan(&id, &name)
+		flavor := Flavor{
+			Id:   id,
+			Name: name,
+		}
+		jsonedData = append(jsonedData, flavor)
+	}
+	// return http response
+	c.IndentedJSON(http.StatusOK, jsonedData)
+}
+
+func createFlavor(c *gin.Context) {
+
+	urlPostgres := "postgres://postgres:root@postgresql:5432/postgres"
+
+	conn, err := pgx.Connect(context.Background(), urlPostgres)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+	defer conn.Close(context.Background())
+
+	var flavor Flavor
+	if err := c.BindJSON(&flavor); err != nil {
+		fmt.Fprintf(os.Stderr, "Bind flavor failed: %v\n", err)
+	}
+
+	response, err := conn.Query(context.Background(), "INSERT INTO flavors (name) VALUES ($1)", flavor.Name)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Create flavor failed: %v\n", err)
+	}
+	_ = response
+	c.JSON(http.StatusOK, gin.H{
+		"status":  200,
+		"message": "flavor successfully created",
+		"flavor":  flavor.Name,
+	})
 }
