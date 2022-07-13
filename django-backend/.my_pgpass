@@ -1,0 +1,7 @@
+import os
+
+NAME = os.getenv('DATABASE_NAME')
+USER = os.getenv('PG_USER')
+PASSWORD = os.getenv('PG_PASSWORD')
+
+localhost:5432:NAME:USER:PASSWORD

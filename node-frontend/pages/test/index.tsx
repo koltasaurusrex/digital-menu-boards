@@ -166,7 +166,6 @@ export default function PersistentDrawerLeft() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            // height: '100vh',
           }}
           >
           <h2 className={styles.title}>Flavors</h2>

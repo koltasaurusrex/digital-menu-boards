@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -9,10 +9,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Divider, TextareaAutosize } from '@mui/material';
 import axios from 'axios';
 import { stringify } from 'querystring';
+import { Description } from '@mui/icons-material';
 
 export default function FormDialog() {
-  var name = '';
- 
+
+  const [ flavor, setFlavor ] = useState({
+    name: "Fred",
+    description: "George"
+  });
 
   const [open, setOpen] = React.useState(false);
 
@@ -25,27 +29,32 @@ export default function FormDialog() {
   };
 
   const createFlavor = () => {
-    var data = {
-      name: name
-    }
+
+    let formData = new FormData();
+    formData.append('name', flavor.name);
+    formData.append('description', flavor.description);
+
     const api = axios.create({
-      baseURL: 'http://localhost:5555',
+      baseURL: 'http://localhost:8000',
       headers: { }
     })
-
-    api.post('/flavors', JSON.stringify(data))
+    console.log(formData);
+    api.post('/flavors/', formData)
     .then(res => {
       console.log(res)
     })
     .catch(error => {
-      console.log('error creating flavor',error)
+      console.log('error creating flavor', error)
     })
     
     handleClose();
   };
 
   const handleChange = (event: any) => {
-      name = event.target.value;
+    setFlavor({
+      ...flavor,
+      [event.target.name]: event.target.value,
+    });
   };
 
   return (
@@ -59,9 +68,20 @@ export default function FormDialog() {
           <TextField 
             autoFocus
             margin="dense"
-            id="name"
+            name="name"
             onChange={handleChange}
             label="Name"
+            type="text"
+            fullWidth
+            variant="standard"
+            required={true}
+          />
+          <TextField 
+            autoFocus
+            margin="dense"
+            name="description"
+            onChange={handleChange}
+            label="Description"
             type="text"
             fullWidth
             variant="standard"

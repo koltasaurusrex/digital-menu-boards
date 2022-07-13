@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "django-backend"
+version = "0.1.0"
+description = ""
+authors = ["Kolton Heaps <koltonheaps@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "^4.0.5"
+psycopg2 = "^2.9.3"
+djangorestframework = "^3.13.1"
+django-cors-headers = "^3.13.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

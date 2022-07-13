@@ -4,7 +4,7 @@ import BasicTable from './BasicTable';
 import { Flavor } from '../types'
 
 const api = axios.create({
-    baseURL: 'http://localhost:5555',
+    baseURL: 'http://localhost:8000',
     headers: { }
 })
 
@@ -23,6 +23,7 @@ export default class GetFlavors extends Component {
             this.setState({flavors: res.data as Flavor[]})
         })
     }
+    
 
       
     render(){ 

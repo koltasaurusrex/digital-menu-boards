@@ -17,6 +17,7 @@ export default class BasicTable extends React.Component<Flavors> {
                   <TableRow>
                     <TableCell>ID</TableCell>
                     <TableCell>Name</TableCell>
+                    <TableCell>Description</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -29,6 +30,7 @@ export default class BasicTable extends React.Component<Flavors> {
                         {row.id}
                       </TableCell>
                       <TableCell>{row.name}</TableCell>
+                      <TableCell>{row.description}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

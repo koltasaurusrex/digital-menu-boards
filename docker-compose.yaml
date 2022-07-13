@@ -2,8 +2,8 @@ version: '1'
 services:
   node-frontend:
     container_name: node_frontend
-    depends_on:
-      - go-backend
+    # depends_on:
+    #   - go-backend
     volumes:
       - ./node-frontend:/usr/src/app
     build: ./node-frontend
@@ -16,14 +16,14 @@ services:
       - POSTGRES_PASSWORD=root
     ports:
       - "5432:5432"
-  go-backend:
-    container_name: go_backend
-    depends_on:
-      postgresql:
-        condition: service_started
-    volumes:
-      - ./go-backend:/usr/src/app
-    build: ./go-backend
-    restart: on-failure
-    ports:
-      - "5555:5555"
+  # go-backend:
+  #   container_name: go_backend
+  #   depends_on:
+  #     postgresql:
+  #       condition: service_started
+  #   volumes:
+  #     - ./go-backend:/usr/src/app
+  #   build: ./go-backend
+  #   restart: on-failure
+  #   ports:
+  #     - "5555:5555"
