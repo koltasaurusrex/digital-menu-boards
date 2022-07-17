@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
 import axios from "axios"
-import FlavorTable from './FlavorTable';
-import { Flavor } from '../types'
+import ScreenViewTable from './ScreenViewTable';
+import { ScreenView } from '../types'
 
 const api = axios.create({
     baseURL: 'http://localhost:8000',
     headers: { }
 })
 
-export default class GetFlavors extends Component { 
+export default class GetScreenViews extends Component { 
 
     state = {
-        flavors: [] as Flavor[]
+        screen_views: [] as ScreenView[]
     }
 
     constructor(props: any){ 
@@ -19,8 +19,8 @@ export default class GetFlavors extends Component {
     } 
 
     componentDidMount() {
-        api.get('/api/flavors/').then(res => {
-            this.setState({flavors: res.data as Flavor[]})
+        api.get('/api/screen_views/').then(res => {
+            this.setState({screen_views: res.data as ScreenView[]})
         })
     }
     
@@ -30,7 +30,7 @@ export default class GetFlavors extends Component {
         return (
             <div>
             <div> 
-                <FlavorTable flavors={this.state.flavors}/>
+                <ScreenViewTable screen_views={this.state.screen_views}/>
             </div>
             </div>
         );

@@ -6,9 +6,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Flavors, Flavor } from '../types';
+import { Screens, Screen } from '../types';
+import EditScreen from './dialogues/EditScreen'
+import DeleteScreen from './dialogues/DeleteScreen'
 
-export default class BasicTable extends React.Component<Flavors> {
+export default class ScreenTable extends React.Component<Screens> {
     render() {
         return (
             <TableContainer component={Paper}>
@@ -17,11 +19,12 @@ export default class BasicTable extends React.Component<Flavors> {
                   <TableRow>
                     <TableCell>ID</TableCell>
                     <TableCell>Name</TableCell>
-                    <TableCell>Description</TableCell>
+                    <TableCell>Location</TableCell>
+                    <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {this.props.flavors.map((row: Flavor) => (
+                  {this.props.screens.map((row: Screen) => (
                     <TableRow
                       key={row.id}
                       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -30,7 +33,15 @@ export default class BasicTable extends React.Component<Flavors> {
                         {row.id}
                       </TableCell>
                       <TableCell>{row.name}</TableCell>
-                      <TableCell>{row.description}</TableCell>
+                      <TableCell>{row.location}</TableCell>
+                      <TableCell>
+                        <div style={{
+                            display: 'flex',
+                          }}>
+                          {<EditScreen data={row}/>}
+                          {<DeleteScreen data={row}/>}
+                        </div>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

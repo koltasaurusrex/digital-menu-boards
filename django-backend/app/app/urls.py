@@ -19,5 +19,13 @@ from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('flavors/', views.list_flavors)
+    path('api/', views.api_overview),
+    path('api/flavors/', views.flavors, name='flavors'),
+    path('api/flavors/<str:pk>', views.flavor, name='flavor'),
+    path('api/screens/', views.screens, name='screens'),
+    path('api/screens/<str:pk>', views.screen, name='screen'),
+    path('api/screen_views/', views.screen_views, name='screen_views'),
+    path('api/screen_views/<str:pk>', views.screen_view, name='screen_view'),
+    path('api/locations/', views.locations, name='locations'),
+    path('api/locations/<str:pk>', views.location, name='location'),
 ]

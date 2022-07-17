@@ -13,9 +13,9 @@ import { Description } from '@mui/icons-material';
 
 export default function FormDialog() {
 
-  const [ flavor, setFlavor ] = useState({
-    name: "Fred",
-    description: "George"
+  const [ location, setLocation ] = useState({
+    name: "",
+    address: ""
   });
 
   const [open, setOpen] = React.useState(false);
@@ -28,12 +28,10 @@ export default function FormDialog() {
     setOpen(false);
   };
 
-  const createFlavor = () => {
+  const createLocation = () => {
     let formData = new FormData();
-    formData.append('name', flavor.name);
-    formData.append('description', flavor.description);
-    formData.append('in_stock', 'true');
-    formData.append('is_assigned', 'false');
+    formData.append('name', location.name);
+    formData.append('address', location.address);
     formData.append('created_by', '1');
     formData.append('created_at', '');
     formData.append('modified_at', '');
@@ -43,20 +41,20 @@ export default function FormDialog() {
       headers: { }
     })
     console.log(formData);
-    api.post('/api/flavors/', formData)
+    api.post('/api/locations/', formData)
     .then(res => {
       console.log(res)
     })
     .catch(error => {
-      console.log('error creating flavor', error)
+      console.log('error creating location', error)
     })
     
     handleClose();
   };
 
   const handleChange = (event: any) => {
-    setFlavor({
-      ...flavor,
+    setLocation({
+      ...location,
       [event.target.name]: event.target.value,
     });
   };
@@ -64,10 +62,10 @@ export default function FormDialog() {
   return (
     <div>
       <Button variant="contained" onClick={handleClickOpen}>
-        Create Flavor
+        Create Location
       </Button>
       <Dialog open={open} onClose={handleClose} fullWidth>
-        <DialogTitle>Create Flavor</DialogTitle>
+        <DialogTitle>Create Location</DialogTitle>
         <DialogContent>
           <TextField 
             autoFocus
@@ -83,9 +81,9 @@ export default function FormDialog() {
           <TextField 
             autoFocus
             margin="dense"
-            name="description"
+            name="address"
             onChange={handleChange}
-            label="Description"
+            label="Address"
             type="text"
             fullWidth
             variant="standard"
@@ -94,7 +92,7 @@ export default function FormDialog() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={createFlavor}>Create</Button>
+          <Button onClick={createLocation}>Create</Button>
         </DialogActions>
       </Dialog>
     </div>

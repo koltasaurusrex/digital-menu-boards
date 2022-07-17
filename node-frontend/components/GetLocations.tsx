@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
 import axios from "axios"
-import FlavorTable from './FlavorTable';
-import { Flavor } from '../types'
+import LocationTable from './LocationsTable';
+import { Location } from '../types'
 
 const api = axios.create({
     baseURL: 'http://localhost:8000',
     headers: { }
 })
 
-export default class GetFlavors extends Component { 
+export default class GetLocations extends Component { 
 
     state = {
-        flavors: [] as Flavor[]
+        locations: [] as Location[]
     }
 
     constructor(props: any){ 
@@ -19,8 +19,8 @@ export default class GetFlavors extends Component {
     } 
 
     componentDidMount() {
-        api.get('/api/flavors/').then(res => {
-            this.setState({flavors: res.data as Flavor[]})
+        api.get('/api/locations/').then(res => {
+            this.setState({locations: res.data as Location[]})
         })
     }
     
@@ -30,7 +30,7 @@ export default class GetFlavors extends Component {
         return (
             <div>
             <div> 
-                <FlavorTable flavors={this.state.flavors}/>
+                <LocationTable locations={this.state.locations}/>
             </div>
             </div>
         );

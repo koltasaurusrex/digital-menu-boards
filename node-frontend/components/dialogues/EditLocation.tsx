@@ -6,16 +6,18 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Divider, TextareaAutosize } from '@mui/material';
+import { Divider, IconButton, TextareaAutosize } from '@mui/material';
 import axios from 'axios';
 import { stringify } from 'querystring';
 import { Description } from '@mui/icons-material';
+import EditIcon from '@mui/icons-material/Edit';
 
-export default function FormDialog() {
 
-  const [ flavor, setFlavor ] = useState({
-    name: "Fred",
-    description: "George"
+export default function EditLocationDialog( data: any ) {
+
+  const [ location, setLocation ] = useState({
+    name: "",
+    description: ""
   });
 
   const [open, setOpen] = React.useState(false);
@@ -28,46 +30,45 @@ export default function FormDialog() {
     setOpen(false);
   };
 
-  const createFlavor = () => {
+  const updateLocation = () => {
     let formData = new FormData();
-    formData.append('name', flavor.name);
-    formData.append('description', flavor.description);
-    formData.append('in_stock', 'true');
-    formData.append('is_assigned', 'false');
-    formData.append('created_by', '1');
-    formData.append('created_at', '');
-    formData.append('modified_at', '');
+
+    if (location.name != "") {
+        formData.append('name', location.name);
+    }
+    if (location.description != "") {
+        formData.append('description', location.description);
+    }
 
     const api = axios.create({
       baseURL: 'http://localhost:8000',
       headers: { }
     })
-    console.log(formData);
-    api.post('/api/flavors/', formData)
+    api.patch(`/api/locations/${data.data.id}`, formData)
     .then(res => {
       console.log(res)
     })
     .catch(error => {
-      console.log('error creating flavor', error)
+      console.log('error creating location', error)
     })
     
     handleClose();
   };
 
   const handleChange = (event: any) => {
-    setFlavor({
-      ...flavor,
+    setLocation({
+      ...location,
       [event.target.name]: event.target.value,
     });
   };
 
   return (
     <div>
-      <Button variant="contained" onClick={handleClickOpen}>
-        Create Flavor
-      </Button>
+      <IconButton onClick={handleClickOpen}>
+        <EditIcon />
+      </IconButton>
       <Dialog open={open} onClose={handleClose} fullWidth>
-        <DialogTitle>Create Flavor</DialogTitle>
+        <DialogTitle>Edit Location</DialogTitle>
         <DialogContent>
           <TextField 
             autoFocus
@@ -76,6 +77,7 @@ export default function FormDialog() {
             onChange={handleChange}
             label="Name"
             type="text"
+            defaultValue={data.data.name}
             fullWidth
             variant="standard"
             required={true}
@@ -87,6 +89,7 @@ export default function FormDialog() {
             onChange={handleChange}
             label="Description"
             type="text"
+            defaultValue={data.data.description}
             fullWidth
             variant="standard"
             required={true}
@@ -94,7 +97,7 @@ export default function FormDialog() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={createFlavor}>Create</Button>
+          <Button onClick={updateLocation}>Update</Button>
         </DialogActions>
       </Dialog>
     </div>

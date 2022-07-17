@@ -10,64 +10,76 @@ import { Divider, TextareaAutosize } from '@mui/material';
 import axios from 'axios';
 import { stringify } from 'querystring';
 import { Description } from '@mui/icons-material';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { Location } from '../../types';
 
 export default function FormDialog() {
 
-  const [ flavor, setFlavor ] = useState({
-    name: "Fred",
-    description: "George"
+  const [ screen, setScreen ] = useState({
+    name: "",
+    location: ""
   });
+
+  const [ options, setOptions ] = useState([]);
+
+
+  const api = axios.create({
+    baseURL: 'http://localhost:8000',
+    headers: { }
+  })
 
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
+    getLocations();
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const createFlavor = () => {
+  const createScreen = () => {
     let formData = new FormData();
-    formData.append('name', flavor.name);
-    formData.append('description', flavor.description);
-    formData.append('in_stock', 'true');
-    formData.append('is_assigned', 'false');
+    formData.append('name', screen.name);
+    formData.append('location', screen.location);
     formData.append('created_by', '1');
     formData.append('created_at', '');
     formData.append('modified_at', '');
 
-    const api = axios.create({
-      baseURL: 'http://localhost:8000',
-      headers: { }
-    })
     console.log(formData);
-    api.post('/api/flavors/', formData)
+    api.post('/api/screens/', formData)
     .then(res => {
       console.log(res)
     })
     .catch(error => {
-      console.log('error creating flavor', error)
+      console.log('error creating screen', error)
     })
     
     handleClose();
   };
 
   const handleChange = (event: any) => {
-    setFlavor({
-      ...flavor,
+    setScreen({
+      ...screen,
       [event.target.name]: event.target.value,
     });
   };
 
+  function getLocations() {
+    api.get('/api/locations/').then(res => {
+        setOptions(res.data as [])
+    })
+  }
+
   return (
     <div>
       <Button variant="contained" onClick={handleClickOpen}>
-        Create Flavor
+        Create Screen
       </Button>
       <Dialog open={open} onClose={handleClose} fullWidth>
-        <DialogTitle>Create Flavor</DialogTitle>
+        <DialogTitle>Create Screen</DialogTitle>
         <DialogContent>
           <TextField 
             autoFocus
@@ -80,21 +92,27 @@ export default function FormDialog() {
             variant="standard"
             required={true}
           />
-          <TextField 
+          <Select 
             autoFocus
             margin="dense"
-            name="description"
+            name="location"
             onChange={handleChange}
-            label="Description"
+            label="Location"
             type="text"
             fullWidth
             variant="standard"
             required={true}
-          />
+          > 
+            {options.map((row: Location) => (
+                    <MenuItem value={row.id}>
+                      {row.name}
+                    </MenuItem>
+                  ))}
+          </Select>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={createFlavor}>Create</Button>
+          <Button onClick={createScreen}>Create</Button>
         </DialogActions>
       </Dialog>
     </div>
